@@ -14,3 +14,21 @@ Gensim: Word2Vec
 
 Uvicorn para la parte del servidor 
 
+----
+ejecutar servidor: 
+
+paso 1.
+
+cd backend 
+
+.\start_server.ps1
+
+Paso 2.
+
+cd frontend 
+cd RI-Proyect
+npm run dev
+
+
+
+ 
