@@ -1,0 +1,4 @@
+Método,Tamaño del Vocabulario,Documentos,Características,Elementos No Ceros,Uso de Memoria (MB),Sparsidad (%),Dimensión del Vector,Cobertura del Vocabulario (%)
+BoW,14050,10788,14050,427364,3.26,99.72,,
+TF-IDF,14050,10788,14050,427364,3.26,99.72,,
+Word2Vec,3000000,10788,300,3236290,24.69,,300.0,94.45
