@@ -26,7 +26,9 @@ cd backend
 Paso 2.
 
 cd frontend 
+
 cd RI-Proyect
+
 npm run dev
 
 

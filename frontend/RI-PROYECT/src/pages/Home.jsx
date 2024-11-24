@@ -1,19 +1,38 @@
-import { useEffect } from "react";
-import api from "../utils/axios";
+import React from 'react';
+import '../styles/styles.css';
 
 const Home = () => {
-  useEffect(() => {
-    // Realiza una petición GET al backend
-    api.get("/")
-      .then((response) => {
-        console.log("Respuesta del backend:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error al comunicarse con el backend:", error);
-      });
-  }, []);
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-black">
+      {/* Fondo decorativo */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="floating-circle floating-circle-1"></div>
+        <div className="floating-circle floating-circle-2"></div>
+      </div>
 
-  return <h1>¡Bienvenido a mi aplicación React!</h1>;
+      <div className="relative">
+        <header className="text-center py-16 px-4">
+          {/* Título con efecto 3D */}
+          <h1 className="text-8xl font-extrabold text-3d-title">
+          Reuters Retriever
+          </h1>
+          {/* Subtítulo mejorado */}
+          <p className="text-lg text-subtitle mt-4">
+            Donde las búsquedas encuentran su máxima precisión
+          </p>
+        </header>
+
+        {/* Barra de búsqueda */}
+        <div className="flex justify-center mt-8 px-4">
+          <input
+            type="text"
+            placeholder="Escribe tu consulta aquí..."
+            className="search-input"
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
