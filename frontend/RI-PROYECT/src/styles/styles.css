@@ -1,0 +1,62 @@
+/* Fondo degradado */
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+  background-size: 400% 400%;
+  animation: gradientFlowFull 15s ease infinite;
+}
+
+/* Título con efecto 3D */
+.text-3d-title {
+  color: #fff;
+  text-shadow: 
+    2px 2px 0px #1a1a1a, 
+    4px 4px 0px #302b63, 
+    6px 6px 0px #24243e;
+}
+
+/* Subtítulo mejorado */
+.text-subtitle {
+  color: #d1d5db; /* Color gris claro */
+  font-weight: 500;
+  background: linear-gradient(90deg, #7f5af0, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 1px 1px 3px rgba(127, 90, 240, 0.5);
+}
+
+/* Fondo animado */
+@keyframes gradientFlowFull {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Barra de búsqueda */
+.search-input {
+  width: 50%;
+  padding: 1rem;
+  border-radius: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #7f5af0;
+  box-shadow: 0 0 10px rgba(127, 90, 240, 0.5);
+}
