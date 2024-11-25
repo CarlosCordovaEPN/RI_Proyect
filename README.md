@@ -1,34 +1,22 @@
-# RI_Proyect
-Implementación de un sistema Retrieval sobre el corpus reuters
+# Proyecto Recuperación de la información
 
+## RAG
 
+## Introducción
 
-Para el front se utilizara React.js, se planea utilizar axios par acomunicaicon con el brack  y tailwind para los estilos 
+Este proyecto es una implementación de un sistema de recuperación de información (RI) que permite buscar y recuperar documentos relevantes dentro de las noticias reuters-21578 a partir de una consulta dada. El sistema está diseñado para ser eficiente y fácil de usar.
 
-------------------
-Para la parte del back se utilizara FastAPI con la posibildiad de utilizar las sigueintes librerias para el procesamiento de datos:
+Descargar librerías y dependencias necesarias ubicadas en el archivo requirements.txt
+pip install requirements.txt
 
-SpaCy: limpiza, tokenizacion stemming
-Scikit-learn: TF_IDF, coseno 
-Gensim: Word2Vec
+Para iniciar la aplicación, utiliza el siguiente comando:
 
-Uvicorn para la parte del servidor 
+```
+En la ubicación raiz /RAG Reuters ejecutar el comando:
+python app.py
+posterior dirigirse al puerto o ip designado 
+```
 
-----
-ejecutar servidor: 
+Este comando ejecutará la aplicación y te permitirá interactuar con el sistema de recuperación de información a través de una interfaz de línea de comandos.
 
-paso 1.
-
-cd backend 
-
-.\start_server.ps1
-
-Paso 2.
-
-cd frontend 
-cd RI-Proyect
-npm run dev
-
-
-
- 
+¡Esperamos que disfrutes utilizando nuestro sistema de recuperación de información!
