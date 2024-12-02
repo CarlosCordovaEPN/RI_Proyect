@@ -7,60 +7,183 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
     <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6D83F2, #88D2E9);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
         .reuters-content {
             white-space: pre-wrap;
-            font-family: monospace;
-            line-height: 1.5;
+            font-family: "Courier New", Courier, monospace;
+            line-height: 1.6;
             overflow-x: auto;
         }
         .highlight {
             background-color: #fff3cd;
             padding: 0 2px;
         }
-        /* Estilo para los separadores de Reuters */
         .reuters-separator {
             border-top: 2px solid #e2e8f0;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+        .search-button:hover {
+            transform: scale(1.05);
+        }
+        .result-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .navbar {
+            background-color: #4C51BF;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .navbar h1 {
+            font-size: 1.8rem;
+            color: white;
+            text-align: center;
+        }
+        .search-bar {
+            background-color: #fff;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .search-bar input {
+            border: none;
+            outline: none;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 16px;
+            width: 70%;
+        }
+        .search-bar button {
+            background-color: #4C51BF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .search-bar button:hover {
+            background-color: #5A67D8;
+        }
+        .results-container {
+            margin: 30px auto;
+            max-width: 90%;
+            padding: 0 1rem;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 50px auto;
+        }
+        .result-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .no-results {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #4C51BF;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+        .statistics-container {
+            margin: 20px auto;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .stats-table th, 
+        .stats-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+        .stats-table th {
+            background-color: #4C51BF;
+            color: white;
+            font-weight: 600;
+        }
+        .stats-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .stats-table tr:hover {
+            background-color: #edf2f7;
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Buscador Reuters</h1>
-            <p class="text-gray-600">Busca entre más de 10,000 noticias del corpus Reuters</p>
-        </header>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">Buscador Reuters</h1>
+        <p class="text-white text-center text-lg opacity-90 italic mb-2">
+            Explora una colección de 10,788 noticias financieras del corpus Reuters
+        </p>
+    </div>
 
-        <!-- Search Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <div class="flex gap-4">
-                <input 
-                    type="text" 
-                    id="searchInput"
-                    class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Ingresa tu búsqueda..."
-                >
-                <button 
-                    id="searchButton"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    Buscar
-                </button>
-            </div>
-        </div>
+    <!-- Search Section -->
+    <div class="search-bar">
+        <input 
+            type="text" 
+            id="searchInput"
+            placeholder="¿Qué estás buscando?"
+            aria-label="Ingresar término de búsqueda"
+            autofocus
+        >
+        <button id="searchButton" aria-label="Iniciar búsqueda">Buscar</button>
+    </div>
 
-        <!-- Results Section -->
-        <div id="resultsContainer" class="space-y-6">
-            <!-- Results will be inserted here -->
-        </div>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 border-opacity-70"></div>
+    </div>
 
-        <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="hidden">
-            <div class="flex justify-center items-center py-8">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-        </div>
+    <!-- Results Section -->
+    <div id="resultsContainer" class="results-container">
+        <!-- Results will be inserted here -->
+    </div>
+
+    <!-- Statistics Button and Container -->
+    <div class="text-center mt-8 mb-4">
+        <button id="showStatsButton" 
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg">
+            Mostrar Estadísticas de Vectorización
+        </button>
+    </div>
+    <div id="statisticsContainer" class="statistics-container" style="display:none;">
+        <!-- Statistics will be inserted here -->
     </div>
 
     <script>
@@ -68,6 +191,8 @@
         const searchButton = document.getElementById('searchButton');
         const resultsContainer = document.getElementById('resultsContainer');
         const loadingSpinner = document.getElementById('loadingSpinner');
+        const showStatsButton = document.getElementById('showStatsButton');
+        const statisticsContainer = document.getElementById('statisticsContainer');
 
         function formatReutersContent(content) {
             return content
@@ -82,35 +207,31 @@
             if (!query) return;
 
             try {
-                loadingSpinner.classList.remove('hidden');
+                loadingSpinner.style.display = 'block';
                 resultsContainer.innerHTML = '';
 
-                const response = await axios.post('/search', {
-                    query: query
-                });
-
+                const response = await axios.post('/search', { query: query });
                 const results = response.data.results;
                 
                 if (results.length === 0) {
                     resultsContainer.innerHTML = `
-                        <div class="text-center py-8 text-gray-600">
-                            No se encontraron resultados para tu búsqueda
-                        </div>
-                    `;
+                        <div class="no-results">
+                            No se encontraron resultados para tu búsqueda.
+                        </div>`;
                     return;
                 }
 
-                results.forEach((result, index) => {
+                results.forEach((result) => {
                     const resultElement = document.createElement('div');
-                    resultElement.className = 'bg-white rounded-lg shadow-md p-6';
+                    resultElement.className = 'result-card custom-shadow';
                     resultElement.innerHTML = `
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-lg font-semibold text-blue-600">Documento #${result.id}</span>
-                            <span class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                            <h2 class="text-xl font-bold text-blue-600">Documento #${result.id}</h2>
+                            <span class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
                                 Score: ${result.score.toFixed(4)}
                             </span>
                         </div>
-                        <div class="reuters-content text-gray-800 bg-gray-50 p-4 rounded border border-gray-200 overflow-x-auto">
+                        <div class="reuters-content text-gray-800 bg-gray-50 p-4 rounded border border-gray-200">
                             ${formatReutersContent(result.content)}
                         </div>
                     `;
@@ -120,20 +241,45 @@
             } catch (error) {
                 console.error('Error en la búsqueda:', error);
                 resultsContainer.innerHTML = `
-                    <div class="text-center py-8 text-red-600">
-                        Ocurrió un error al procesar tu búsqueda: ${error.message}
-                    </div>
-                `;
+                    <div class="no-results">
+                        Ocurrió un error al procesar tu búsqueda.
+                    </div>`;
             } finally {
-                loadingSpinner.classList.add('hidden');
+                loadingSpinner.style.display = 'none';
             }
         }
 
-        // Event listeners
+        async function showVectorizationStats() {
+
+            statisticsContainer.innerHTML = `
+            
+        `;
+        statisticsContainer.style.display = 'block';
+
+            const [statsResponse, logsResponse] = await Promise.all([
+                axios.get('/vectorization-stats')
+            ]);
+
+            const stats = statsResponse.data.stats;
+            if (!stats || stats.length === 0) {
+                statisticsContainer.innerHTML = `
+                    <div class="bg-blue-100 text-blue-800 p-4 rounded-lg text-center mb-4">
+                        Las estadísticas detalladas están disponibles en la terminal del servidor.
+                        <p class="text-sm mt-2 text-blue-600">
+                            Revisa la terminal para ver información adicional sobre las matrices y vectorizaciones.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+        }
+
+        // Event Listeners
         searchButton.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') performSearch();
         });
+        showStatsButton.addEventListener('click', showVectorizationStats);
     </script>
 </body>
 </html>

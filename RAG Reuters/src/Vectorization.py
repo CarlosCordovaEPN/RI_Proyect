@@ -21,12 +21,34 @@ class TextVectorizer:
         
         self.vectorization_results = {}
         
-        # Cargar modelo pre-entrenado
         logger.info("Cargando modelo Word2Vec pre-entrenado...")
         self.word2vec_model = api.load("word2vec-google-news-300")
         logger.info("Modelo Word2Vec cargado exitosamente")
 
+    def print_matrix_preview(self, matrix, method_name: str, n_samples: int = 5):
+        """Muestra una vista previa de la matriz de vectorización"""
+        print(f"\n{'-'*50}\nVista previa de la matriz {method_name}:\n{'-'*50}\n")
+        
+        if isinstance(matrix, np.ndarray):
+            preview = matrix[:n_samples]
+        else:  # Para matrices sparse
+            preview = matrix[:n_samples].toarray()
+            
+        print(f"Primeras {n_samples} filas:\n{preview}\n")
+        print(f"Forma de la matriz: {matrix.shape}\n")
+        
+        # Mostrar algunas estadísticas básicas
+        if isinstance(matrix, np.ndarray):
+            print(f"Media: {np.mean(matrix):.4f}\n")
+            print(f"Desviación estándar: {np.std(matrix):.4f}\n")
+        else:
+            dense_matrix = matrix.toarray()
+            print(f"Media: {np.mean(dense_matrix):.4f}\n")
+            print(f"Desviación estándar: {np.std(dense_matrix):.4f}\n")
+        print(f"Elementos no ceros: {np.count_nonzero(preview)}\n")
+
     def apply_bow(self) -> Dict:
+        logger.info("Aplicando vectorización BoW...\n")
         bow_matrix = self.bow_vectorizer.fit_transform(self.df['body'])
         
         result = {
@@ -39,9 +61,11 @@ class TextVectorizer:
         }
         
         self.vectorization_results['BoW'] = result
+        self.print_matrix_preview(bow_matrix, "BoW")
         return result
 
     def apply_tfidf(self) -> Dict:
+        logger.info("Aplicando vectorización TF-IDF...\n")
         tfidf_matrix = self.tfidf_vectorizer.fit_transform(self.df['body'])
         
         result = {
@@ -54,12 +78,11 @@ class TextVectorizer:
         }
         
         self.vectorization_results['TF-IDF'] = result
+        self.print_matrix_preview(tfidf_matrix, "TF-IDF")
         return result
 
     def apply_word2vec(self) -> Dict:
-        """
-        Aplica Word2Vec usando el modelo pre-entrenado de Google News.
-        """
+        logger.info("Aplicando vectorización Word2Vec...\n")
         vector_size = self.word2vec_model.vector_size
         doc_vectors = []
         words_found = 0
@@ -81,7 +104,6 @@ class TextVectorizer:
                 except KeyError:
                     continue
             
-            # Normalizar el vector si encontramos palabras
             if count > 0:
                 vec /= count
             
@@ -101,9 +123,13 @@ class TextVectorizer:
         }
         
         self.vectorization_results['Word2Vec'] = result
+        self.print_matrix_preview(doc_vectors_matrix, "Word2Vec")
         return result
 
     def get_statistics_df(self) -> pd.DataFrame:
+        """
+        Genera un DataFrame con las estadísticas de todas las técnicas de vectorización.
+        """
         stats_data = []
         
         for method, result in self.vectorization_results.items():
@@ -116,9 +142,12 @@ class TextVectorizer:
                 'Uso de Memoria (MB)': round(result['memory_usage_mb'], 2)
             }
             
-            if method != 'Word2Vec':
+            if method in ['BoW', 'TF-IDF']:
                 stats['Sparsidad (%)'] = round(result['sparsity'] * 100, 2)
-            else:
+                stats['Dimensión del Vector'] = None
+                stats['Cobertura del Vocabulario (%)'] = None
+            else:  # Word2Vec
+                stats['Sparsidad (%)'] = None
                 stats['Dimensión del Vector'] = result['vector_size']
                 stats['Cobertura del Vocabulario (%)'] = round(result['vocabulary_coverage'], 2)
             
@@ -126,31 +155,19 @@ class TextVectorizer:
         
         return pd.DataFrame(stats_data)
 
-    def save_statistics(self, output_path: str = None):
-        if output_path is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_path = f'vectorization_stats_{timestamp}.csv'
-        
-        stats_df = self.get_statistics_df()
-        stats_df.to_csv(output_path, index=False)
-        logger.info(f"Estadísticas guardadas en: {output_path}")
-        
-        return stats_df
-
 def main():
     # Inicializar vectorizador
     vectorizer = TextVectorizer('reuters_preprocessed_clean.csv')
     
     # Aplicar las técnicas de vectorización
+    print("\nAplicando vectorizaciones...\n")
     vectorizer.apply_bow()
     vectorizer.apply_tfidf()
     vectorizer.apply_word2vec()
     
-    # Guardar estadísticas
-    stats_df = vectorizer.save_statistics('vectorization_statistics.csv')
-    
-    # Mostrar estadísticas en consola
-    logger.info("\nEstadísticas de vectorización:")
+    # Mostrar estadísticas comparativas
+    print("\nResumen comparativo de las técnicas de vectorización:\n")
+    stats_df = vectorizer.get_statistics_df()
     print(stats_df.to_string(index=False))
 
 if __name__ == "__main__":

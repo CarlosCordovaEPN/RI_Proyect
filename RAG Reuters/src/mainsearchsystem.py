@@ -4,7 +4,7 @@ from pathlib import Path
 import argparse
 
 # Importar los módulos del sistema
-from read_processing import DocumentPreprocessor
+from Read_processing import DocumentPreprocessor
 from Vectorization import TextVectorizer
 from search_index import SearchEngine
 from evaluation import SystemEvaluator
